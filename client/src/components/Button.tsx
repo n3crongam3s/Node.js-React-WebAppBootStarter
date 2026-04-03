@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 import './components.css'
 
-const Button = () => {
-  const [data, setData] = useState(null)
+type ApiResponse = {
+  message: string
+}
+
+const Button: React.FC = () => {
+  const [data, setData] = useState<ApiResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
@@ -14,12 +18,11 @@ const Button = () => {
     try {
       const res = await fetch('/api/hello')
 
-      if (!res.ok) {
-        throw new Error('Request failed')
-      }
+      if (!res.ok) throw new Error('Request failed')
 
-      const result = await res.json()
+      const result: ApiResponse = await res.json()
       setData(result)
+
     } catch (err) {
       console.error(err)
       setError(true)
@@ -30,7 +33,7 @@ const Button = () => {
 
   return (
     <div>
-      {loading && <p>A carregar...</p>}
+      {loading && <p>Loading...</p>}
 
       {data?.message && (
         <p style={{ color: 'green', fontWeight: 'bold' }}>

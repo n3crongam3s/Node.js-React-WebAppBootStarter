@@ -1,106 +1,152 @@
-#📦 React + Node.js Base Template
-This repository provides a clean and organized base template for rapid development of web applications using React (frontend) and Node.js (backend).
-It includes a simple test connection setup and a basic navigation bar to help understand the project flow.
+# 📦 React + Node.js + TypeScript Base Bootstarter
 
-##▶️ How to Run the App
-Before running the application, make sure you install dependencies in root, client, and server directories.
-    npm install
+This repository provides a clean and scalable base bootstarter for building
+modern web applications using:
 
+-   ⚛️ React (Vite + TypeScript) -- Frontend
+-   🚀 Node.js (Express + TypeScript) -- Backend
+-   🗄️ SQLite -- Database (easily replaceable)
 
-To start both client and server simultaneously from the root directory:
-    npm run dev
+It also includes shared types between frontend and backend, enabling
+better consistency and type safety across the entire application.
 
+------------------------------------------------------------------------
 
-#📁 Project Structure Explanation
-##📂 root
+## ▶️ How to Run the App
+
+Install dependencies in all directories:
+
+npm install cd client && npm install cd ../server && npm install
+
+Run both frontend and backend from root:
+
+npm run dev
+
+------------------------------------------------------------------------
+
+## 🌐 Application Ports
+
+-   Frontend (Vite): http://localhost:5173
+-   Backend (Express): http://localhost:5000
+
+------------------------------------------------------------------------
+
+# 📁 Project Structure
+
+## 📂 root
+
 Main project directory.
-Contains configuration to run both frontend and backend together.
 
-###📂 client/ (React Frontend)
-Contains the entire frontend application built with React.
+Contains: - Shared types - Root scripts (run both client and server)
 
-###📂 public/
+------------------------------------------------------------------------
 
-Public static files accessible by anyone.
-#⚠️ Do NOT store sensitive information here.
+## 📂 shared/
 
-    index.html → Base HTML file where React is injected
-    favicon.ico → Browser tab icon
-    logo192.png, logo512.png → App icons
-    manifest.json → PWA configuration
-    robots.txt → Search engine instructions
-    user.png → Static user image (example asset)
+Contains shared TypeScript types used by both frontend and backend.
 
-###📂 src/
-Main source code of the React application.
+shared/ types/ User.ts Request.ts
 
-###📂 components/
-Reusable UI components used across the app.
+Purpose: - Avoid duplication of types - Keep frontend and backend in
+sync - Improve scalability and maintainability
 
-    Button.js → Button component (used to test Node connection)
-    Navbar.js → Simple navigation bar
-    components.css → Styles specific to components
+------------------------------------------------------------------------
 
-###📂 pages/
-Contains application pages.
-Each file usually represents a route (Home, Dashboard, etc.).
+## 📂 client/ (Frontend - Vite + React + TypeScript)
 
-###📂 services/
-Handles communication with the backend.
-Used for API calls (fetch / axios) to the Node.js server.
+Modern frontend setup using Vite.
 
-    App.js
-        Main React component.
-        Application structure
-        Routes
-        Global layout
+### 📂 public/
 
-    index.js
-        React entry point.
-        Renders the App component into the DOM
-        Usually not modified unless necessary
+Static public assets (accessible directly).
 
-    App.css
-        Styles related to the main App component.
+⚠️ Do NOT store sensitive data here.
 
-    index.css
-        Global styles applied across the entire application.
+------------------------------------------------------------------------
 
+### 📂 src/
 
-##📂 server/ (Node.js Backend)
-Contains the backend API built with Node.js (Express).
+Main application source code.
 
-###📂 controllers/
-Business logic of the application.
-Handles request processing
-Returns responses to the client
+### 📂 components/
 
-###📂 middlewares/
-Custom middleware functions.
-Authentication
-Logging
-Error handling
-Request validation
+Reusable UI components.
 
-###📂 models/
-Data models and schemas.
-Represents entities (e.g. User, Project)
-Used for database interaction
+### 📂 pages/
 
-###📂 routes/
-API route definitions.
-Receives HTTP requests
-Connects endpoints to controllers
+Application pages (mapped to routes).
 
-    index.js
-        Main server entry file.
-        Initializes Express
-        Loads middlewares and routes
-        Starts the backend server
+### 📂 services/
 
-#🎯 Template Purpose
+Handles API communication (fetch / axios).
+
+------------------------------------------------------------------------
+
+### 📄 main.tsx
+
+Application entry point.
+
+### 📄 App.tsx
+
+Main application component.
+
+### 📄 vite.config.ts
+
+Vite configuration.
+
+------------------------------------------------------------------------
+
+## 📂 server/ (Backend - Node.js + Express + TypeScript)
+
+Backend API using Express.
+
+### 📂 controllers/
+
+Handles business logic.
+
+### 📂 routes/
+
+Defines API endpoints.
+
+### 📂 data/
+
+Database setup and storage.
+
+------------------------------------------------------------------------
+
+### 📄 index.ts
+
+Main server entry point.
+
+------------------------------------------------------------------------
+
+# 🔄 API Example
+
+GET /api/users
+
+POST /api/users
+
+DELETE /api/users
+
+------------------------------------------------------------------------
+
+# 🎯 Template Purpose
+
 This template is designed to:
-    Speed up project setup
-    Keep frontend and backend well separated
-    Encourage clean and scalable architecture
-    Serve as a solid starting point for real-world applications
+
+-   🚀 Speed up project setup
+-   🧱 Provide a scalable architecture
+-   🔗 Share types between frontend and backend
+-   📦 Support modern tooling (Vite + TypeScript)
+-   🧠 Encourage clean code practices
+
+------------------------------------------------------------------------
+
+# ⚡ Summary
+
+This template provides a solid foundation for building full-stack
+applications with:
+
+-   Type safety across the stack
+-   Clean separation of concerns
+-   Scalable structure for real-world SaaS applications

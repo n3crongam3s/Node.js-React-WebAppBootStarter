@@ -1,16 +1,13 @@
-import React from 'react';
-import './components.css';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Offcanvas from 'react-bootstrap/Offcanvas';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import Button from 'react-bootstrap/Button'
+import Container from 'react-bootstrap/Container'
+import Form from 'react-bootstrap/Form'
+import Nav from 'react-bootstrap/Nav'
+import Navbar from 'react-bootstrap/Navbar'
+import NavDropdown from 'react-bootstrap/NavDropdown'
+import Offcanvas from 'react-bootstrap/Offcanvas'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './components.css'
 import { Link } from "react-router-dom"
-import Data from "../pages/data.js";
 
 function AppNavbar() {
   return (
@@ -22,11 +19,10 @@ function AppNavbar() {
 
         <Navbar.Offcanvas
           id="offcanvasNavbar"
-          aria-labelledby="offcanvasNavbarLabel"
           placement="end"
         >
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title id="offcanvasNavbarLabel">
+            <Offcanvas.Title>
               Menu
             </Offcanvas.Title>
           </Offcanvas.Header>
@@ -37,7 +33,8 @@ function AppNavbar() {
               <Nav.Link as={Link} to="/data">
                 Users
               </Nav.Link>
-              <NavDropdown title="Mais" id="offcanvasNavbarDropdown">
+
+              <NavDropdown title="More">
                 <NavDropdown.Item href="/">Menu 2</NavDropdown.Item>
                 <NavDropdown.Item href="/">Menu 3</NavDropdown.Item>
               </NavDropdown>
@@ -55,8 +52,7 @@ function AppNavbar() {
         </Navbar.Offcanvas>
       </Container>
     </Navbar>
-  );
+  )
 }
 
-// export const Navbar = () => {};
-export default AppNavbar;
+export default AppNavbar
