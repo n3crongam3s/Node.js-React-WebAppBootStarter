@@ -10,7 +10,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: [process.env.RENDER_API_URL, 'http://localhost:5173'],
+    origin: process.env.RENDER_API_URL, // 'http://localhost:5173', //for local development or just add on your .env file
     methods: ['GET', 'POST']
   }
 })
@@ -22,7 +22,7 @@ io.on('connection', (socket) => {
 })
 
 app.use(cors({
-  origin: [process.env.RENDER_API_URL, 'http://localhost:5173']
+  origin: process.env.RENDER_API_URL // 'http://localhost:5173' //for local development or just add on your .env file
 }))
 app.use(express.json())
 
