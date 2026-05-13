@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import db from '../data/dataStore'
 import { Server } from 'socket.io'
-import { User } from '@shared/types/User'
+import db from '../data/dataStore.js'
+import { User } from '@shared/types/User.js'
 
 type CreateUserBody = {
   UserName: string
@@ -12,7 +12,7 @@ type DeleteUserBody = {
 }
 
 const getSocketServer = (req: Request): Server | undefined => {
-  return (req.app.locals.io as Server | undefined)
+  return req.app.locals.io as Server | undefined
 }
 
 export const getUsers = (req: Request, res: Response) => {
@@ -45,7 +45,7 @@ export const addUsers = (req: Request<{}, {}, CreateUserBody>, res: Response) =>
       io.emit('newUser', newUser)
     }
 
-    res.json({ success: true, id: result.lastInsertRowid })
+    res.json({ success: true, user: newUser })
   } catch (err: any) {
     res.status(500).json({ error: err.message })
   }
@@ -59,7 +59,12 @@ export const deleteUsers = (req: Request<{}, {}, DeleteUserBody>, res: Response)
       .prepare("DELETE FROM Users WHERE UserID = ?")
       .run(UserID)
 
-    res.json({ success: true, deleted: result.changes })
+    const io = getSocketServer(req)
+    if (io && result.changes > 0) {
+      io.emit('deleteUser', UserID)
+    }
+
+    res.json({ success: true, deleted: result.changes, userId: UserID })
   } catch (err: any) {
     res.status(500).json({ error: err.message })
   }

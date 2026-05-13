@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import './components.css'
 
+import { testConnection } from '../services/apiService'
+
 type ApiResponse = {
   message: string
 }
@@ -16,16 +18,13 @@ const Button: React.FC = () => {
     setData(null)
 
     try {
-      const res = await fetch('/api/hello')
-
-      if (!res.ok) throw new Error('Request failed')
-
-      const result: ApiResponse = await res.json()
+      const result = await testConnection()
       setData(result)
 
     } catch (err) {
       console.error(err)
       setError(true)
+
     } finally {
       setLoading(false)
     }
@@ -36,18 +35,29 @@ const Button: React.FC = () => {
       {loading && <p>Loading...</p>}
 
       {data?.message && (
-        <p style={{ color: 'green', fontWeight: 'bold' }}>
+        <p
+          style={{
+            color: 'green',
+            fontWeight: 'bold'
+          }}
+        >
           {data.message}
         </p>
       )}
 
       {error && (
-        <p style={{ color: 'red', fontWeight: 'bold' }}>
+        <p
+          style={{
+            color: 'red',
+            fontWeight: 'bold'
+          }}
+        >
           Failed!
         </p>
       )}
 
       <br />
+
       <button onClick={handleClick}>
         Test Node Connection
       </button>

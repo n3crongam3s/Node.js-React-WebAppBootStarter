@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Data from "./pages/data"
 import Button from './components/Button'
 
+
 function App() {
   return (
     <Router>
