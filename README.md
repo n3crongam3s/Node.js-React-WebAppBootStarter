@@ -346,7 +346,7 @@ The frontend is configured to deploy with Vercel using the following settings:
 The backend is configured to deploy with Render using the following settings:
 
 - Service type: `Web Service`
-- Build command: `cd server && npm install && npm run build`
+- Build command: `cd server && npm install && npx prisma generate && npx prisma migrate deploy && npm run build --verbose`
 - Start command: `cd server && npm start`
 
 ### Notes for Render
