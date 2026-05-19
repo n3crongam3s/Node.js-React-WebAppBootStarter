@@ -2,17 +2,24 @@ import { useState, type ChangeEvent } from 'react'
 import Navbar from '../components/Navbar'
 import Button from 'react-bootstrap/Button'
 import { useSocketUsers } from '../hooks/useSocketUsers'
+import { CiTrash } from "react-icons/ci";
+import { CiSettings } from "react-icons/ci";
+import { CiCirclePlus } from "react-icons/ci";
+import { CiCircleCheck } from "react-icons/ci";
 
 function Data() {
   const {
+    userEditing,
     users,
     loading,
     error,
     addUser,
     deleteUser,
-    refresh
+    updateUser,
+    setUserEditing
   } = useSocketUsers()
   const [newUserName, setNewUserName] = useState('')
+  const [editingUserName, setEditingUserName] = useState('')
 
   const handleAddUser = async () => {
     if (!newUserName.trim()) return
@@ -25,6 +32,10 @@ function Data() {
     await deleteUser(id)
   }
 
+  const handleUpdateUser = async (id: number, userName: string) => {
+    await updateUser(id, userName)
+  }
+
   return (
     <div>
       <Navbar />
@@ -35,15 +46,50 @@ function Data() {
         {users.map(user => (
           <div key={user.UserID}>
             <p>
-              ID: {user.UserID} | {user.UserName}
+              ID: {user.UserID} |               
+              {userEditing === user.UserID ? (
+                <> User: 
+                  <input
+                    value={editingUserName}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setEditingUserName(e.target.value)
+                    }
+                    placeholder={user.UserName}
+                  /> <> </>
+                </>
+              ) : (
+                <>User: {user.UserName} </>
+              )}
 
               <Button
                 onClick={() => handleDeleteUser(user.UserID)}
                 variant="danger"
               >
-                Delete
-              </Button>
+                <CiTrash />
+              </Button> <></>
+              <Button
+                onClick={() => {
+                  { if (userEditing === user.UserID) {
+                      setUserEditing(null)
+                      return
+                    }}
+                  setUserEditing(user.UserID)
+                  setEditingUserName(user.UserName)
+                }}
+                variant="warning"
+              >
+                <CiSettings />
+              </Button> <> </>
+              {userEditing === user.UserID && (
+                <Button
+                  onClick={() => handleUpdateUser(user.UserID, editingUserName)}
+                  variant="success"
+                >
+                  <CiCircleCheck />
+                </Button>
+              )}
             </p>
+            <hr />
           </div>
         ))}
 
@@ -76,7 +122,7 @@ function Data() {
           onClick={handleAddUser}
           variant="success"
         >
-          Add User
+          <CiCirclePlus /> Add User
         </Button>
       </div>
     </div>

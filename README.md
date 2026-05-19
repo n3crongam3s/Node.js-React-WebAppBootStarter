@@ -5,7 +5,7 @@ modern web applications using:
 
 -   ⚛️ React (Vite + TypeScript) -- Frontend
 -   🚀 Node.js (Express + TypeScript) -- Backend
--   🗄️ SQLite -- Database (easily replaceable)
+-   🗄️ PostgreSQL (Prisma) -- Database
 -   🔌 Socket.IO -- Real-time communication
 
 It also includes shared types between frontend and backend, enabling
@@ -165,8 +165,10 @@ Defines API endpoints.
 ### 📂 data/
 
 Database setup and storage.
--   `dataStore.ts` - SQLite database initialization and queries
+-   `dataStore.ts` - Prisma client and database queries
 -   `data.sql` - SQL schema and initial data
+-   `server/prisma/schema.prisma` - Prisma schema definition
+-   `server/lib/prisma.ts` - Prisma client initialization
 
 ### 📂 midlewares/
 
@@ -234,13 +236,13 @@ This application uses Socket.IO for real-time data synchronization between the s
 
 ### 1. User Addition
 - Client sends POST request to `/api/users`
-- Server controller adds user to SQLite database
+- Server controller adds user to PostgreSQL database via Prisma
 - Controller emits `newUser` event via Socket.IO
 - All connected clients receive the event and update their user list in real-time
 
 ### 2. User Deletion
 - Client sends DELETE request to `/api/users`
-- Server controller removes user from SQLite database
+- Server controller removes user from PostgreSQL database via Prisma
 - Controller emits `deleteUser` event via Socket.IO
 - All connected clients receive the event and update their user list in real-time
 
@@ -270,24 +272,36 @@ const { users, loading, error } = useSocketUsers()
 
 # 🗄️ Database
 
-This template uses **SQLite** with `better-sqlite3` for a lightweight, file-based database.
+This template uses **PostgreSQL** with **Prisma** as the ORM for database access and migrations.
 
-### Default Schema
+### Prisma Schema
 
-```sql
-CREATE TABLE Users (
-  UserID INTEGER PRIMARY KEY AUTOINCREMENT,
-  UserName TEXT NOT NULL UNIQUE
-)
+The Prisma schema is defined in `server/prisma/schema.prisma`. Example model:
+
+```prisma
+model User {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+}
 ```
 
-### Initial Data
-The database comes pre-populated with 5 test users:
-- Test1
-- Test2
-- Test3
-- Test4
-- Test5
+### Initial Setup
+
+To run migrations and generate the Prisma client:
+
+```bash
+cd server
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+Set the `DATABASE_URL` environment variable pointing to your PostgreSQL instance:
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/database?schema=public"
+```
+
+For Neon deployment, use the connection string provided by Neon with `npx prisma migrate deploy`.
 
 ------------------------------------------------------------------------
 
@@ -296,22 +310,23 @@ The database comes pre-populated with 5 test users:
 | Layer | Technology |
 |-------|------------|
 | **Frontend** | React 19, Vite, TypeScript, React Router, React Bootstrap, Socket.IO Client |
-| **Backend** | Node.js, Express, TypeScript, Socket.IO, better-sqlite3 |
+| **Backend** | Node.js, Express, TypeScript, Socket.IO, Prisma |
 | **Build** | Vite (frontend), tsx (backend TypeScript runtime) |
 | **Development** | concurrently (run server and client simultaneously) |
-| **Database** | SQLite |
+| **Database** | PostgreSQL |
 | **Type Safety** | Shared TypeScript types across frontend and backend |
 
 ------------------------------------------------------------------------
 
 # 🚀 Deployment
 
-This project includes everything needed to run the frontend on **Vercel** and the backend on **Render**.
+This project includes everything needed to run the frontend on **Vercel**, the backend on **Render**, and the database on **Neon** (PostgreSQL serverless).
 
 - Frontend deploy: https://vercel.com
 - Backend deploy: https://render.com
+- Database: https://neon.tech
 
-> Both deployments should also include the environment variables defined in your `.env` files.
+> All deployments should include the environment variables defined in your `.env` files. For Neon, use the `DATABASE_URL` provided in the Neon dashboard.
 
 ## Vercel
 

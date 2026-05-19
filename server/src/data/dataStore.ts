@@ -1,8 +1,11 @@
-import Database from 'better-sqlite3'
-import path from 'path'
+import { Pool } from 'pg'
+import dotenv from 'dotenv'
 
-const dbPath = path.resolve(process.cwd(), 'src/data/data.db')
+dotenv.config()
 
-const db = new Database(dbPath)
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false } // Required for Neon
+})
 
-export default db
+export default pool

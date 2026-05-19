@@ -1,71 +1,86 @@
 import { Request, Response } from 'express'
-import { Server } from 'socket.io'
-import db from '../data/dataStore.js'
-import { User } from '@shared/types/User.js'
+import pool from '../data/dataStore.js'
+import type { User } from '@shared/types/User.js'
+import { io } from '../index.js'
+import { prisma } from "../lib/prisma.js";
 
-type CreateUserBody = {
-  UserName: string
-}
-
-type DeleteUserBody = {
-  UserID: number
-}
-
-const getSocketServer = (req: Request): Server | undefined => {
-  return req.app.locals.io as Server | undefined
-}
-
-export const getUsers = (req: Request, res: Response) => {
+export const getUsers = async (req: Request, res: Response) => {
   try {
-    const users = db.prepare("SELECT * FROM Users").all() as User[]
-    res.json(users)
+    const result = await prisma.user.findMany()
+    res.json(result as User[])
   } catch (err: any) {
+    console.error(err)
     res.status(500).json({ error: err.message })
   }
 }
 
-export const addUsers = (req: Request<{}, {}, CreateUserBody>, res: Response) => {
+export const addUsers = async (
+  req: Request<{}, {}, { UserName: string , PasswordHash: string }>,
+  res: Response
+) => {
   try {
-    const { UserName } = req.body
+    const { UserName, PasswordHash } = req.body
 
-    if (!UserName) {
-      return res.status(400).json({ error: "UserName required" })
-    }
+    const result = await prisma.user.create({
+      data: {
+        UserName,
+        PasswordHash,
+      },
+    })
 
-    const result = db
-      .prepare("INSERT INTO Users (UserName) VALUES (?)")
-      .run(UserName)
+    io.emit('newUser', result) // Emit new user data to all connected clients
 
-    const newUser = db
-      .prepare("SELECT * FROM Users WHERE UserID = ?")
-      .get(result.lastInsertRowid) as User | undefined
-
-    const io = getSocketServer(req)
-    if (io && newUser) {
-      io.emit('newUser', newUser)
-    }
-
-    res.json({ success: true, user: newUser })
+    res.json({ success: true, user: result })
   } catch (err: any) {
+    console.error(err)
     res.status(500).json({ error: err.message })
   }
 }
 
-export const deleteUsers = (req: Request<{}, {}, DeleteUserBody>, res: Response) => {
+export const deleteUsers = async (
+  req: Request<{}, {}, { UserID: number }>,
+  res: Response
+) => {
   try {
     const { UserID } = req.body
 
-    const result = db
-      .prepare("DELETE FROM Users WHERE UserID = ?")
-      .run(UserID)
+    const result = await prisma.user.deleteMany({
+      where: {
+        UserID: UserID
+      }
+    })
 
-    const io = getSocketServer(req)
-    if (io && result.changes > 0) {
-      io.emit('deleteUser', UserID)
-    }
+    io.emit('deleteUser', UserID) // Emit deleted user ID to all connected clients
 
-    res.json({ success: true, deleted: result.changes, userId: UserID })
+    res.json({ success: true, deleted: result })
   } catch (err: any) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
+  }
+}
+
+export const updateUsers = async (
+  req: Request<{}, {}, { UserID: number, UserName: string, PasswordHash: string }>,
+  res: Response
+) => {
+  try {
+    const { UserID, UserName, PasswordHash } = req.body 
+
+    const result = await prisma.user.update({
+      where: {
+        UserID: UserID
+      },
+      data: {
+        UserName,
+        PasswordHash
+      }
+    })
+
+    io.emit('updateUser', result) // Emit updated user data to all connected clients
+
+    res.json({ success: true, user: result })
+  } catch (err: any) {
+    console.error(err)
     res.status(500).json({ error: err.message })
   }
 }
